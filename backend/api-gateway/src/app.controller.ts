@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Post, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Controller('api/products')
 export class AppController {
   constructor(
     @Inject('PRODUCTS_SERVICE')
     private readonly productsClient: ClientProxy,
-  ) {}
+  ) { }
 
   @Get()
   findAll() {
@@ -14,7 +15,8 @@ export class AppController {
   }
 
   @Post()
-  create(@Body() body: any) {
-    return this.productsClient.send('create_product', body);
+  create(@Body() dto: CreateProductDto) {
+    return this.productsClient.send('create_product', dto);
   }
+
 }

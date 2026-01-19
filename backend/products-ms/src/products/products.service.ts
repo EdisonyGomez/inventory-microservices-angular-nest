@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
+import { RpcException } from '@nestjs/microservices/exceptions/rpc-exception';
 
 @Injectable()
 export class ProductsService {
@@ -12,13 +13,17 @@ export class ProductsService {
   }
 
   create(dto: CreateProductDto) {
-  const product = {
-    id: Date.now(),
-    ...dto,
-  };
+    if (dto.price < 0) {
+      throw new RpcException('El precio no puede ser negativo');
+    }
 
-  this.products.push(product);
-  return product;
-}
+    const product = {
+      id: Date.now(),
+      ...dto,
+    };
+
+    this.products.push(product);
+    return product;
+  }
 
 }
