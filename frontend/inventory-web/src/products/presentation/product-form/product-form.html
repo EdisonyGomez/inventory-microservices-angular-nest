@@ -1,0 +1,21 @@
+<h3>Nuevo producto</h3>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input placeholder="Nombre" formControlName="name" />
+
+  <input
+    type="number"
+    placeholder="Precio"
+    formControlName="price"
+  />
+
+  <input
+    type="number"
+    placeholder="Stock"
+    formControlName="stock"
+  />
+
+  <button type="submit" [disabled]="form.invalid">
+    Crear
+  </button>
+</form>

@@ -1,0 +1,19 @@
+<h2>Productos</h2>
+
+@if (loading) {
+  <p>Cargando...</p>
+}
+
+<ul>
+  @for (product of products; track product.id) {
+    <li>
+      <strong>{{ product.name }}</strong>
+      - {{ product.price }}
+      - stock: {{ product.stock }}
+
+      <button (click)="delete(product.id)">
+        Eliminar
+      </button>
+    </li>
+  }
+</ul>

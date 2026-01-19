@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": "./",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -13,7 +14,17 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+
+    //Rutas absolutas
+    "paths": {
+      "@productData/*": ["src/products/data/*"],
+      "@productDomain/*": ["src/products/domain/*"],
+      "@productPresentation/*": ["src/products/presentation/*"],
+
+      "@environments/*": ["src/environments/*"]
+
+    },
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
