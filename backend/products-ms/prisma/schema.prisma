@@ -4,5 +4,14 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+}
+
+model InvProduct {
+  id        String   @id @default(uuid())
+  name      String
+  price     Decimal
+  stock     Int
+  createdAt DateTime @default(now())
+
+  @@map("inv_products")
 }
