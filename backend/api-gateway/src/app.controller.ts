@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Inject } from '@nestjs/common';
+import { Body, Controller, Get, Post, Inject, Delete, Param } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateProductDto } from './dto/create-product.dto';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
@@ -18,8 +18,21 @@ export class AppController {
   }
 
   @Post()
-  create(@Body() dto: CreateProductDto) {
-    return this.productsClient.send('create_product', dto);
+  async create(@Body() dto: CreateProductDto) {
+    return lastValueFrom(
+      this.productsClient.send(
+        { cmd: 'products.create' },
+        dto,
+      ),
+    );
   }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string) {
+    return lastValueFrom(
+      this.productsClient.send({ cmd: 'delete-product' }, { id })
+    );
+  }
+
 
 }
