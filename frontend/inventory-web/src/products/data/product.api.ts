@@ -17,8 +17,8 @@ export class productApi {
     return this.http.get<Product[]>(`${environment.apiUrl}products`);
   }
 
-  create(product: Omit<Product, 'id' | 'createdAt'>): Observable<Product> {
-    return this.http.post<Product>(environment.apiUrl, product);
+  create(product: Product): Observable<Product> {
+    return this.http.post<Product>(`${environment.apiUrl}products`, product);
   }
 
   delete(id: string): Observable<Product> {

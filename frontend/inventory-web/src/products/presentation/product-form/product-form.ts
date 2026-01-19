@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -13,9 +13,10 @@ import { Product } from '@productDomain/models/product.model';
   selector: 'app-product-form',
   imports: [ReactiveFormsModule],
   templateUrl: './product-form.html',
-  styleUrls: ['./product-form.css'],
 })
 export class ProductFormComponent {
+  @Output() created = new EventEmitter<void>();
+
   form = new FormGroup({
     name: new FormControl('', Validators.required),
     price: new FormControl(0, [Validators.required, Validators.min(1)]),
@@ -28,8 +29,6 @@ export class ProductFormComponent {
     if (this.form.invalid) return;
 
     const product: Product = {
-      id: '',
-      createdAt: '',
       name: this.form.value.name!,
       price: this.form.value.price!,
       stock: this.form.value.stock!,
@@ -38,6 +37,7 @@ export class ProductFormComponent {
     this.insertProductsUseCase.execute(product).subscribe({
       next: () => {
         this.form.reset({ price: 0, stock: 0 });
+        this.created.emit();
       },
     });
   }

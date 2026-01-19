@@ -1,19 +1,105 @@
-<h2>Productos</h2>
+<div class="p-6 space-y-6">
+  <!-- Header -->
+<div class="p-6 space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-900">
+        All Products
+      </h2>
+      <p class="text-sm text-gray-500">
+        Manage and monitor your store inventory in real-time.
+      </p>
+    </div>
 
-@if (loading) {
-  <p>Cargando...</p>
+    <button
+      (click)="openModal()"
+      class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm"
+    >
+      Nuevo producto
+    </button>
+  </div>
+
+
+  @if (loading) {
+    <p class="text-gray-500">Cargando productos...</p>
+  }
+
+  <!-- Products Grid -->
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+  >
+    @for (product of products; track product.id) {
+      <div
+        class="bg-white rounded-xl shadow-sm border hover:shadow-md transition"
+      >
+        <!-- Image placeholder -->
+        <div
+          class="relative h-44 bg-gray-100 rounded-t-xl flex items-center justify-center"
+        >
+          <span
+            class="absolute top-3 left-3 px-2 py-1 text-xs font-medium rounded-full"
+            [ngClass]="getStockBadgeClass(product.stock)"
+          >
+            {{ getStockLabel(product.stock) }}
+          </span>
+
+          <span class="text-gray-400 text-sm">
+            Imagen
+          </span>
+        </div>
+
+        <!-- Content -->
+        <div class="p-4 space-y-2">
+          <p class="text-sm text-gray-500">
+            Producto
+          </p>
+
+          <h3 class="font-medium text-gray-900">
+            {{ product.name }}
+          </h3>
+
+          <p class="text-blue-600 font-semibold">
+            $ {{ product.price | number }}
+          </p>
+
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-xs text-gray-500">
+              Stock: {{ product.stock }}
+            </span>
+
+            <button
+              (click)="delete(product.id)"
+              class="text-sm text-red-600 hover:underline"
+            >
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+  @if (isModalOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      class="absolute inset-0 bg-black/40"
+      (click)="closeModal()"
+    ></div>
+
+    <div
+      class="relative bg-white rounded-xl shadow-lg w-full max-w-md p-6"
+    >
+      <app-product-form
+        (created)="onProductCreated()"
+      />
+
+      <button
+        (click)="closeModal()"
+        class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
 }
 
-<ul>
-  @for (product of products; track product.id) {
-    <li>
-      <strong>{{ product.name }}</strong>
-      - {{ product.price }}
-      - stock: {{ product.stock }}
-
-      <button (click)="delete(product.id)">
-        Eliminar
-      </button>
-    </li>
-  }
-</ul>
+</div>
