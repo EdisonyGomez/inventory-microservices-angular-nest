@@ -1,6 +1,5 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Body, Controller, Get, Post, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
 
 @Controller('api/products')
 export class AppController {
@@ -10,7 +9,12 @@ export class AppController {
   ) {}
 
   @Get()
-  findAll(): Observable<any> {
+  findAll() {
     return this.productsClient.send('list_products', {});
+  }
+
+  @Post()
+  create(@Body() body: any) {
+    return this.productsClient.send('create_product', body);
   }
 }
