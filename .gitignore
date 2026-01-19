@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+npm-debug.log*
+yarn-error.log*
+
+# Angular
+.angular/
+.angular-cache/
+
+# Nest
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
