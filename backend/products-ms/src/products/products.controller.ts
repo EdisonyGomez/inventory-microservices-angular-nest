@@ -7,12 +7,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @MessagePattern('list_products')
-  findAll() {
-    return this.productsService.findAll();
-  }
-
-  @MessagePattern('create_product')
+  @MessagePattern('products.create')
   create(@Payload() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }

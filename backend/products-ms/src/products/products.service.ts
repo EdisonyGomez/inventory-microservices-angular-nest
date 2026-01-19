@@ -1,29 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'prisma/prisma.service'; 
 import { CreateProductDto } from './dto/create-product.dto';
-import { RpcException } from '@nestjs/microservices/exceptions/rpc-exception';
 
 @Injectable()
 export class ProductsService {
-  private products = [
-    { id: 1, name: 'Producto demo', price: 100, stock: 10 },
-  ];
-
-  findAll() {
-    return this.products;
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   create(dto: CreateProductDto) {
-    if (dto.price < 0) {
-      throw new RpcException('El precio no puede ser negativo');
-    }
-
-    const product = {
-      id: Date.now(),
-      ...dto,
-    };
-
-    this.products.push(product);
-    return product;
+    return this.prisma.invProduct.create({
+      data: {
+        name: dto.name,
+        price: dto.price,
+        stock: dto.stock,
+      },
+    });
   }
-
 }
