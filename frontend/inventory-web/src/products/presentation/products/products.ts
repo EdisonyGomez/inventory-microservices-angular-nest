@@ -1,9 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, computed, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '@productDomain/models/product.model';
 import { GetProductsUseCase } from '@productDomain/useCases/getProducts.useCase';
 import { DeleteProductsUseCase } from '@productDomain/useCases/deleteProducts.useCase';
 import { ProductFormComponent } from '@productPresentation/product-form/product-form';
+
+type ProductsState = {
+  products: Product[];
+  loading: boolean;
+};
 
 @Component({
   standalone: true,
@@ -12,9 +17,16 @@ import { ProductFormComponent } from '@productPresentation/product-form/product-
   templateUrl: './products.html',
 })
 export default class ProductsComponent implements OnInit {
-  products: Product[] = [];
-  loading = false;
-  isModalOpen = false;
+  private state = signal<ProductsState>({
+    products: [],
+    loading: false,
+  });
+  
+
+  readonly products = computed(() => this.state().products);
+  readonly loading = computed(() => this.state().loading);
+
+  readonly isModalOpen = signal(false);
 
   constructor(
     private getProductsUseCase: GetProductsUseCase,
@@ -26,15 +38,17 @@ export default class ProductsComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.loading = true;
+    this.state.update((s) => ({ ...s, loading: true }));
 
     this.getProductsUseCase.execute().subscribe({
       next: (products) => {
-        this.products = products;
-        this.loading = false;
+        this.state.set({
+          products,
+          loading: false,
+        });
       },
       error: () => {
-        this.loading = false;
+        this.state.update((s) => ({ ...s, loading: false }));
       },
     });
   }
@@ -46,11 +60,11 @@ export default class ProductsComponent implements OnInit {
   }
 
   openModal(): void {
-    this.isModalOpen = true;
+    this.isModalOpen.set(true);
   }
 
   closeModal(): void {
-    this.isModalOpen = false;
+    this.isModalOpen.set(false);
   }
 
   onProductCreated(): void {

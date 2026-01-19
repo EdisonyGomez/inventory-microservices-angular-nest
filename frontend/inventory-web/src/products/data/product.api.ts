@@ -22,7 +22,7 @@ export class productApi {
   }
 
   delete(id: string): Observable<Product> {
-    return this.http.delete<Product>(`${environment.apiUrl}${id}`);
+    return this.http.delete<Product>(`${environment.apiUrl}products/${id}`);
   }
 
 }
