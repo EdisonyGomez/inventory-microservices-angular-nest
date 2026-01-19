@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateProductDto } from './dto/create-product.dto';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
 @Controller('api/products')
 export class AppController {
@@ -10,8 +11,10 @@ export class AppController {
   ) { }
 
   @Get()
-  findAll() {
-    return this.productsClient.send('list_products', {});
+  async getProducts() {
+    return lastValueFrom(
+      this.productsClient.send({ cmd: 'get-products' }, {})
+    );
   }
 
   @Post()

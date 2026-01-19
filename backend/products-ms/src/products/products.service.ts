@@ -15,4 +15,9 @@ export class ProductsService {
       },
     });
   }
+
+  async findAll() {
+  return this.prisma.invProduct.findMany();
+}
+
 }

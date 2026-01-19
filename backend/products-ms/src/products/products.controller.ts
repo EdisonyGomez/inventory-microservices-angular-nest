@@ -5,10 +5,19 @@ import { CreateProductDto } from './dto/create-product.dto';
 
 @Controller()
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @MessagePattern('products.create')
   create(@Payload() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
+
+  
+  @MessagePattern({ cmd: 'get-products' })
+  findAll() {
+    return this.productsService.findAll();
+  }
+
+
+
 }
