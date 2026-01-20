@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class StorageService {

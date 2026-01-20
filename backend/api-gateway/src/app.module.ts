@@ -12,17 +12,17 @@ import { ConfigModule } from '@nestjs/config/dist/config.module';
         name: 'PRODUCTS_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: '127.0.0.1',
-          port: 8877,
+          host: process.env.PRODUCTS_MS_HOST || 'products-service',
+          port: Number(process.env.PRODUCTS_MS_PORT) || 8877,
         },
-        
+
       },
     ]),
     ConfigModule.forRoot({
-      isGlobal: true, 
+      isGlobal: true,
     }),
   ],
   controllers: [AppController],
-  providers: [AppService,StorageService],
+  providers: [AppService, StorageService],
 })
-export class AppModule {}
+export class AppModule { }

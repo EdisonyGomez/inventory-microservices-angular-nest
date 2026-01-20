@@ -1,0 +1,44 @@
+services:
+  # 1. El Microservicio de Productos (El que hace el trabajo sucio)
+  products-service:
+    build:
+      context: ./backend/products-ms
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://postgres.odqwyfkblrkgarqrypqe:3mptyVox05-|@aws-1-us-east-2.pooler.supabase.com:5432/postgres
+    networks:
+      - inventory-net
+ 
+
+  # 2. El API Gateway (La entrada)
+  backend-api:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # CLAVE: Aquí ya no usas 'localhost' ni '127.0.0.1'
+      # Usas el NOMBRE del servicio que pusimos arriba
+      - PRODUCTS_MS_HOST=products-service
+      - PRODUCTS_MS_PORT=8877
+    depends_on:
+      - products-service
+    networks:
+      - inventory-net
+
+  # 3. El Frontend (La cara)
+  frontend-app:
+    build:
+      context: ./frontend/inventory-web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-api
+    networks:
+      - inventory-net
+
+networks:
+  inventory-net:
+    driver: bridge
