@@ -8,9 +8,10 @@ async function bootstrap() {
 
   // CORS Configuration
   app.enableCors({
-    origin: 'https://inventory-microservices-angular-nest-production.up.railway.app',
+    origin: 'https://peaceful-spontaneity-production.up.railway.app',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     credentials: true,
+    allowedHeaders: 'Content-Type, Authorization',
   });
 
   // Global Validation Pipe
