@@ -16,6 +16,8 @@ RUN pnpm install --no-frozen-lockfile
 # 4. Copiamos el resto del código (Asegúrate de tener el .dockerignore)
 COPY . .
 
+ARG DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+
 # 5. Generar el cliente de Prisma
 # Forzamos la generación. Si falla aquí, revisa que la ruta ./prisma/schema.prisma sea correcta
 RUN npx prisma generate --schema=./prisma/schema.prisma
