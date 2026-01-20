@@ -36,6 +36,8 @@ La solución se despliega como un monorepo gestionado en **Railway**, donde cada
 * **Base de Datos:** Supabase (PostgreSQL).
 
 ---
+###
+URL en producción
 
 ## 🌐 Detalles del Despliegue en Producción
 
@@ -43,7 +45,7 @@ El sistema utiliza la red privada de Railway para la comunicación interna, opti
 
 | Servicio | Rol | Acceso | URL / Host de Red |
 | :--- | :--- | :--- | :--- |
-| **Frontend** | Interfaz | Público | `https://peaceful-spontaneity-production.up.railway.app` |
+| **Frontend** | Interfaz | Público | https://peaceful-spontaneity-production.up.railway.app |
 | **API Gateway** | Orquestador | Público | `https://inventory-microservices-angular-nest-production.up.railway.app` |
 | **Products MS** | Lógica/DB | Privado | `selfless-kindness.railway.internal` |
 
