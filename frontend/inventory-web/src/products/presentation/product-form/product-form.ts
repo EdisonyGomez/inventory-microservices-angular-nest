@@ -1,60 +1,83 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { CommonModule } from '@angular/common'; // Importante para el *ngIf
 import { InsertProductsUseCase } from '@productDomain/useCases/insertProducts.useCase';
-import { Product } from '@productDomain/models/product.model';
+import { NotificationService } from 'src/app/core/services/notification.service';
+
 
 @Component({
   standalone: true,
   selector: 'app-product-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './product-form.html',
 })
 export class ProductFormComponent {
   @Output() created = new EventEmitter<void>();
   @Output() cancelled = new EventEmitter<void>();
 
+  imagePreview: string | null = null;
+  isSubmitting = signal(false); // Signal para el loader
   form = new FormGroup({
-    name: new FormControl('', Validators.required),
-    price: new FormControl(0, [Validators.required, Validators.min(1)]),
-    stock: new FormControl(0, [Validators.required, Validators.min(0)]),
+    name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    price: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(1)] }),
+    stock: new FormControl(0, { nonNullable: true, validators: [Validators.required, Validators.min(0)] }),
     image: new FormControl<File | null>(null),
   });
 
-  constructor(private insertProductsUseCase: InsertProductsUseCase) {}
+  constructor(private insertProductsUseCase: InsertProductsUseCase,
+             private notification: NotificationService // Tu nuevo servicio
+  ) { }
 
-  submit(): void {
-    if (this.form.invalid) return;
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      this.form.patchValue({ image: file });
 
-    const product: Product = {
-      name: this.form.value.name!,
-      price: this.form.value.price!,
-      stock: this.form.value.stock!,
-    };
+      // Generar Preview
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
-    this.insertProductsUseCase.execute(product).subscribe({
+submit(): void {
+    if (this.form.invalid || this.isSubmitting()) return;
+
+    this.isSubmitting.set(true); // Bloquear botón e iniciar loader
+
+    const formData = new FormData();
+    formData.append('name', this.form.controls.name.value);
+    formData.append('price', String(this.form.controls.price.value));
+    formData.append('stock', String(this.form.controls.stock.value));
+
+    if (this.form.value.image) {
+      formData.append('image', this.form.value.image);
+    }
+
+    this.insertProductsUseCase.execute(formData).subscribe({
       next: () => {
-        this.form.reset({
-          price: 0,
-          stock: 0,
-        });
+        this.notification.success('Producto creado con éxito');
+        this.form.reset();
+        this.imagePreview = null;
+        this.isSubmitting.set(false);
         this.created.emit();
       },
+      error: (err) => {
+        const errorMsg = err.error?.message || 'Error al conectar con el servidor';
+        error: () => this.notification.error('Error al crear el producto')
+        this.isSubmitting.set(false);
+      }
     });
   }
 
   cancel(): void {
-    this.cancelled.emit();
-  }
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files?.length) {
-      this.form.controls.image.setValue(input.files[0]);
-    }
-  }
+if (!this.isSubmitting()) this.cancelled.emit();  }
 }

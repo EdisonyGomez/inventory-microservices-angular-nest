@@ -15,7 +15,10 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true,
+      transform: true, // Habilita la transformación automática
+      transformOptions: {
+        enableImplicitConversion: true, // Convierte strings numéricos a Number automáticamente
+      },
     }),
   );
 

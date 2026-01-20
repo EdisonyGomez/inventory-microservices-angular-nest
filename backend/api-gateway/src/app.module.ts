@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { StorageService } from './storage/storage.service';
+import { ConfigModule } from '@nestjs/config/dist/config.module';
 
 @Module({
   imports: [
@@ -13,10 +15,14 @@ import { AppService } from './app.service';
           host: '127.0.0.1',
           port: 8877,
         },
+        
       },
     ]),
+    ConfigModule.forRoot({
+      isGlobal: true, 
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,StorageService],
 })
 export class AppModule {}

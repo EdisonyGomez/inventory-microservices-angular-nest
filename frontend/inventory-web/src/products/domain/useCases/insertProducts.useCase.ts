@@ -10,8 +10,8 @@ import { Observable } from "rxjs";
 export class InsertProductsUseCase {
     constructor(private productRepository: ProductRepository) {}
 
-    execute(product: Product): Observable<Product> {
-        return this.productRepository.create(product);
+    execute(formData: FormData): Observable<Product> {
+        return this.productRepository.create(formData);
     }
 
 }

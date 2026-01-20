@@ -8,6 +8,6 @@ import { Observable } from "rxjs";
 
 export abstract class ProductRepository {
     abstract getAll(): Observable<Product[]>;
-    abstract create(product: Product): Observable<Product>;
+    abstract create(formData: FormData): Observable<Product>;
     abstract delete(id: string): Observable<Product>;
 }

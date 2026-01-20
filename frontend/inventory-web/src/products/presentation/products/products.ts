@@ -4,6 +4,7 @@ import { Product } from '@productDomain/models/product.model';
 import { GetProductsUseCase } from '@productDomain/useCases/getProducts.useCase';
 import { DeleteProductsUseCase } from '@productDomain/useCases/deleteProducts.useCase';
 import { ProductFormComponent } from '@productPresentation/product-form/product-form';
+import { NotificationService } from 'src/app/core/services/notification.service';
 
 type ProductsState = {
   products: Product[];
@@ -21,7 +22,7 @@ export default class ProductsComponent implements OnInit {
     products: [],
     loading: false,
   });
-  
+
 
   readonly products = computed(() => this.state().products);
   readonly loading = computed(() => this.state().loading);
@@ -30,8 +31,9 @@ export default class ProductsComponent implements OnInit {
 
   constructor(
     private getProductsUseCase: GetProductsUseCase,
-    private deleteProductsUseCase: DeleteProductsUseCase
-  ) {}
+    private deleteProductsUseCase: DeleteProductsUseCase,
+    private notification: NotificationService // Inyectar servicio
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -53,11 +55,25 @@ export default class ProductsComponent implements OnInit {
     });
   }
 
-  delete(id: string): void {
-    this.deleteProductsUseCase.execute(id).subscribe({
-      next: () => this.loadProducts(),
-    });
+async delete(product: Product): Promise<void> {
+    if (!product.id) return;
+
+    // 1. Pedir confirmación al usuario
+    const confirmed = await this.notification.confirmDelete(product.name);
+    
+    if (confirmed) {
+      this.deleteProductsUseCase.execute(product.id).subscribe({
+        next: () => {
+          this.loadProducts();
+          this.notification.success('Producto eliminado correctamente');
+        },
+        error: () => {
+          this.notification.error('No se pudo eliminar el producto');
+        }
+      });
+    }
   }
+
 
   openModal(): void {
     this.isModalOpen.set(true);
@@ -73,14 +89,22 @@ export default class ProductsComponent implements OnInit {
   }
 
   getStockLabel(stock: number): string {
-    if (stock === 0) return 'OUT OF STOCK';
-    if (stock <= 5) return 'LOW STOCK';
-    return 'IN STOCK';
+    if (stock === 0) return 'Agotado';
+    if (stock <= 5) return 'Stock Crítico';
+    return 'En Stock';
   }
 
   getStockBadgeClass(stock: number): string {
-    if (stock === 0) return 'bg-red-100 text-red-600';
-    if (stock <= 5) return 'bg-yellow-100 text-yellow-700';
-    return 'bg-green-100 text-green-700';
+    if (stock === 0) return 'bg-red-50 text-red-600 border border-red-100';
+    if (stock <= 5) return 'bg-orange-50 text-orange-600 border border-orange-100';
+    return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
+  }
+
+  // En ProductsComponent class
+  handleImageError(event: any): void {
+    // Reemplaza la imagen rota por una de respaldo
+    event.target.src = 'assets/images/placeholder-product.png'; // Asegúrate de tener esta ruta
+    // O simplemente puedes ocultar la imagen fallida:
+    // event.target.style.display = 'none';
   }
 }

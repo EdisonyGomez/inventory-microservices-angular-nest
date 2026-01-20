@@ -17,8 +17,8 @@ export class productApi {
     return this.http.get<Product[]>(`${environment.apiUrl}products`);
   }
 
-  create(product: Product): Observable<Product> {
-    return this.http.post<Product>(`${environment.apiUrl}products`, product);
+  create(formData: FormData): Observable<Product> {
+    return this.http.post<Product>(`${environment.apiUrl}products`, formData);
   }
 
   delete(id: string): Observable<Product> {

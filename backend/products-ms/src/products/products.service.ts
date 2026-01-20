@@ -12,6 +12,8 @@ export class ProductsService {
         name: dto.name,
         price: dto.price,
         stock: dto.stock,
+        imageUrl: dto.imageUrl ?? null,
+
       },
     });
   }

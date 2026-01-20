@@ -18,8 +18,8 @@ export class ProductRepositoryImpl extends ProductRepository {
         return this.productApi.getAll();
     }
 
-    override create(product: Product): Observable<Product> {    
-        return this.productApi.create(product);
+    override create(formData: FormData): Observable<Product> {    
+        return this.productApi.create(formData);
     }
 
     override delete(id: string): Observable<Product> {
