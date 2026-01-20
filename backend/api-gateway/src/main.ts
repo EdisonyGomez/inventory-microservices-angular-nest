@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // CORS Configuration
   app.enableCors({
-    origin: 'http://localhost:4200',
+    origin: 'peaceful-spontaneity-production.up.railway.app',
     methods: 'GET,POST,PUT,DELETE,OPTIONS',
     credentials: true,
   });
